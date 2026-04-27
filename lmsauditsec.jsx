@@ -300,14 +300,15 @@ function useScrollVisible(ref) {
   return visible;
 }
 
-function AnimatedSection({ children, delay = 0, className = "" }) {
+// ADICIONEI o `style = {}` aqui para repassar a altura do grid para o cartão animado
+function AnimatedSection({ children, delay = 0, className = "", style = {} }) {
   const ref = useRef(null);
   const visible = useScrollVisible(ref);
   return (
     <div
       ref={ref}
       className={`use-visible ${visible ? "visible" : ""} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ transitionDelay: `${delay}ms`, ...style }}
     >
       {children}
     </div>
@@ -577,7 +578,7 @@ function LMAuditSec() {
 
       <div className="divider-gold" style={{ width: "80%", maxWidth: 800 }} />
 
-      {/* PREÇOS */}
+      {/* PREÇOS - SEÇÃO CORRIGIDA PARA ALTURA IGUAL */}
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "120px 24px", position: "relative" }}>
         <span className="section-number">03</span>
         <AnimatedSection style={{ textAlign: "center" }}>
@@ -588,9 +589,11 @@ function LMAuditSec() {
           </h2>
         </AnimatedSection>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, marginTop: 72, alignItems: "start" }}>
+        {/* Mudei alignItems: "start" para "stretch" */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, marginTop: 72, alignItems: "stretch" }}>
           {plans.map((plan, i) => (
-            <AnimatedSection key={plan.name} delay={i * 120}>
+            /* Adicionei style={{ height: "100%" }} aqui */
+            <AnimatedSection key={plan.name} delay={i * 120} style={{ height: "100%" }}>
               <div
                 className={plan.featured ? "price-card-featured" : plan.isSoc ? "price-card-soc" : "card-elite"}
                 style={{ padding: 48, borderRadius: 12, position: "relative", height: "100%", display: "flex", flexDirection: "column" }}
@@ -627,7 +630,7 @@ function LMAuditSec() {
                   ))}
                 </ul>
 
-                <button className={`cta-btn ${plan.featured ? "cta-btn-primary" : ""}`} style={{ width: "100%", justifyContent: "center", borderRadius: 4 }}>
+                <button className={`cta-btn ${plan.featured ? "cta-btn-primary" : ""}`} style={{ width: "100%", justifyContent: "center", borderRadius: 4, marginTop: "auto" }}>
                   {plan.cta}
                 </button>
               </div>
