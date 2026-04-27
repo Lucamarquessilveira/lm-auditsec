@@ -300,7 +300,6 @@ function useScrollVisible(ref) {
   return visible;
 }
 
-// ADICIONEI o `style = {}` aqui para repassar a altura do grid para o cartão animado
 function AnimatedSection({ children, delay = 0, className = "", style = {} }) {
   const ref = useRef(null);
   const visible = useScrollVisible(ref);
@@ -578,7 +577,7 @@ function LMAuditSec() {
 
       <div className="divider-gold" style={{ width: "80%", maxWidth: 800 }} />
 
-      {/* PREÇOS - SEÇÃO CORRIGIDA PARA ALTURA IGUAL */}
+      {/* PREÇOS - COM A CORREÇÃO DA ETIQUETA E DO GRID */}
       <section style={{ maxWidth: 1200, margin: "0 auto", padding: "120px 24px", position: "relative" }}>
         <span className="section-number">03</span>
         <AnimatedSection style={{ textAlign: "center" }}>
@@ -589,51 +588,56 @@ function LMAuditSec() {
           </h2>
         </AnimatedSection>
 
-        {/* Mudei alignItems: "start" para "stretch" */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 32, marginTop: 72, alignItems: "stretch" }}>
           {plans.map((plan, i) => (
-            /* Adicionei style={{ height: "100%" }} aqui */
             <AnimatedSection key={plan.name} delay={i * 120} style={{ height: "100%" }}>
-              <div
-                className={plan.featured ? "price-card-featured" : plan.isSoc ? "price-card-soc" : "card-elite"}
-                style={{ padding: 48, borderRadius: 12, position: "relative", height: "100%", display: "flex", flexDirection: "column" }}
-              >
+              
+              {/* === SOLUÇÃO AQUI: Wrapper separado só para a etiqueta === */}
+              <div style={{ position: "relative", height: "100%" }}>
+                
                 {plan.badge && (
-                  <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)" }}>
-                    <span className="badge" style={{ fontSize: 11, padding: "6px 20px", background: plan.featured ? GOLD : "rgba(197,160,89,0.15)", color: plan.featured ? NAVY : GOLD, whiteSpace: "nowrap" }}>
+                  <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)", zIndex: 10 }}>
+                    <span className="badge" style={{ fontSize: 11, padding: "6px 20px", background: plan.featured ? GOLD : "#0f2040", color: plan.featured ? NAVY : GOLD, whiteSpace: "nowrap", border: plan.featured ? "none" : `1px solid ${GOLD}` }}>
                       {plan.badge}
                     </span>
                   </div>
                 )}
 
-                <div className="space-grotesk" style={{ fontSize: 14, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", color: GOLD, marginBottom: 16 }}>{plan.name}</div>
-                <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 12 }}>
-                  <span className="space-grotesk" style={{ fontSize: plan.price === "Sob Consulta" ? 32 : 44, fontWeight: 700, color: "#fff" }}>{plan.price}</span>
-                  {plan.price !== "Sob Consulta" && <span style={{ fontSize: 16, color: "rgba(226,232,240,0.5)" }}>/mês</span>}
+                <div
+                  className={plan.featured ? "price-card-featured" : plan.isSoc ? "price-card-soc" : "card-elite"}
+                  style={{ padding: 48, borderRadius: 12, position: "relative", height: "100%", display: "flex", flexDirection: "column" }}
+                >
+                  <div className="space-grotesk" style={{ fontSize: 14, fontWeight: 600, letterSpacing: 2, textTransform: "uppercase", color: GOLD, marginBottom: 16 }}>{plan.name}</div>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 12 }}>
+                    <span className="space-grotesk" style={{ fontSize: plan.price === "Sob Consulta" ? 32 : 44, fontWeight: 700, color: "#fff" }}>{plan.price}</span>
+                    {plan.price !== "Sob Consulta" && <span style={{ fontSize: 16, color: "rgba(226,232,240,0.5)" }}>/mês</span>}
+                  </div>
+                  <p style={{ fontSize: 15, color: "rgba(226,232,240,0.6)", marginBottom: 32, lineHeight: 1.6 }}>{plan.desc}</p>
+
+                  <div className="divider-gold" style={{ marginLeft: 0, marginBottom: 32, width: "100%" }} />
+
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 16, marginBottom: 48, flexGrow: 1 }}>
+                    {plan.items.map((item, j) => (
+                      <li key={j} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                        {item.startsWith("Tudo") ? (
+                          <span style={{ fontSize: 15, color: GOLD, fontStyle: "italic", fontWeight: 600 }}>{item}</span>
+                        ) : (
+                          <>
+                            <span style={{ color: GOLD, flexShrink: 0, marginTop: 2, fontSize: 14 }}>◆</span>
+                            <span style={{ fontSize: 15, color: "rgba(226,232,240,0.8)", lineHeight: 1.5 }}>{item}</span>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button className={`cta-btn ${plan.featured ? "cta-btn-primary" : ""}`} style={{ width: "100%", justifyContent: "center", borderRadius: 4, marginTop: "auto" }}>
+                    {plan.cta}
+                  </button>
                 </div>
-                <p style={{ fontSize: 15, color: "rgba(226,232,240,0.6)", marginBottom: 32, lineHeight: 1.6 }}>{plan.desc}</p>
-
-                <div className="divider-gold" style={{ marginLeft: 0, marginBottom: 32, width: "100%" }} />
-
-                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 16, marginBottom: 48, flexGrow: 1 }}>
-                  {plan.items.map((item, j) => (
-                    <li key={j} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                      {item.startsWith("Tudo") ? (
-                        <span style={{ fontSize: 15, color: GOLD, fontStyle: "italic", fontWeight: 600 }}>{item}</span>
-                      ) : (
-                        <>
-                          <span style={{ color: GOLD, flexShrink: 0, marginTop: 2, fontSize: 14 }}>◆</span>
-                          <span style={{ fontSize: 15, color: "rgba(226,232,240,0.8)", lineHeight: 1.5 }}>{item}</span>
-                        </>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-
-                <button className={`cta-btn ${plan.featured ? "cta-btn-primary" : ""}`} style={{ width: "100%", justifyContent: "center", borderRadius: 4, marginTop: "auto" }}>
-                  {plan.cta}
-                </button>
               </div>
+              {/* ======================================================== */}
+
             </AnimatedSection>
           ))}
         </div>
